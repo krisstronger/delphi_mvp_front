@@ -1,69 +1,76 @@
-"use client"; // Marca el componente como del lado del cliente
+"use client";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import GridShape from "@/components/common/GridShape";
 
 const Login = () => {
-  const router = useRouter(); // Hook para redireccionar
+  const router = useRouter();
+
+
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // Evita que el formulario se envíe
-    // Aquí puedes agregar la lógica para manejar el inicio de sesión
-    router.push("/dashboard"); // Redirige al dashboard después del login
+    e.preventDefault();
+    // Lógica de autenticación aquí (puedes usar NextAuth.js, Firebase Auth, etc.)
+    const isLoginSuccessful = true; // Simula un login exitoso
+
+    if (isLoginSuccessful) {
+      router.push("/dashboard"); // Redirige a /admin después del login
+    } else {
+      alert("Credenciales incorrectas"); // Manejo de errores
+    }
   };
-
+  
   return (
-    <section className="text-gray-400 bg-gray-900 body-font">
-      <div className="container mx-auto flex px-5 py-24 items-center justify-center flex-col">
-        {/* Título */}
-        <h1 className="title-font sm:text-4xl text-3xl mb-4 font-medium text-white">
-          Iniciar Sesión
-        </h1>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(29,78,216,0.3),_transparent)]"></div>
+       */}
+             <GridShape />
+      <Card className="w-full max-w-md bg-gray-900 shadow-xl border border-gray-800 rounded-2xl relative z-10">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold text-white">Iniciar Sesión</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Campo Email */}
+            <div>
+              <Label htmlFor="email" className="text-gray-300">Correo Electrónico</Label>
+              <Input
+                id="email"
+                type="email"
+                required
+                placeholder="Ingresa tu correo"
+                className="mt-1 bg-gray-800 border-gray-700 text-gray-300 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
 
-        {/* Formulario */}
-        <form
-          onSubmit={handleSubmit}
-          className="lg:w-1/3 md:w-1/2 bg-gray-800 bg-opacity-50 rounded-lg p-8 flex flex-col w-full mt-10"
-        >
-          {/* Campo de correo electrónico */}
-          <div className="relative mb-4">
-            <label htmlFor="email" className="leading-7 text-sm text-gray-400">
-              Correo Electrónico
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="w-full bg-gray-600 bg-opacity-20 focus:bg-transparent focus:ring-2 focus:ring-blue-500 rounded border border-gray-600 focus:border-blue-500 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-              required
-            />
-          </div>
+            {/* Campo Contraseña */}
+            <div>
+              <Label htmlFor="password" className="text-gray-300">Contraseña</Label>
+              <Input
+                id="password"
+                type="password"
+                required
+                placeholder="••••••••"
+                className="mt-1 bg-gray-800 border-gray-700 text-gray-300 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
 
-          {/* Campo de contraseña */}
-          <div className="relative mb-8">
-            <label
-              htmlFor="password"
-              className="leading-7 text-sm text-gray-400"
-            >
-              Contraseña
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              className="w-full bg-gray-600 bg-opacity-20 focus:bg-transparent focus:ring-2 focus:ring-blue-500 rounded border border-gray-600 focus:border-blue-500 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-              required
-            />
-          </div>
+            {/* Botón de Login */}
+            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 transition">
+              Iniciar Sesión
+            </Button>
 
-          {/* Botón de enviar */}
-          <button
-            type="submit"
-            className="text-white bg-blue-500 border-0 py-2 px-8 focus:outline-none hover:bg-blue-600 rounded text-lg transition-colors"
-          >
-            Iniciar Sesión
-          </button>
-        </form>
-      </div>
-    </section>
+            {/* Enlace de recuperación */}
+            <p className="text-sm text-gray-400 text-center mt-2">
+              ¿Olvidaste tu contraseña? <a href="#" className="text-blue-500 hover:underline">Recupérala aquí</a>
+            </p>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
