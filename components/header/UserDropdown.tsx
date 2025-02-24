@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Modal from "@/components/Modal";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import Image from "next/image";
 
 const UserDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,19 +41,27 @@ const UserDropdown = () => {
         }`}
       >
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center">
+          {/* <div className="w-8 h-8 rounded-full flex items-center justify-center">
             <UserCircleIcon
               className={`w-5 h-5 ${
                 isDark ? "text-gray-400" : "text-gray-600"
               }`}
             />
-          </div>
+          </div> */}
+          <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
+          <Image
+            width={44}
+            height={44}
+            src="/assets/images/user/owner.gif"
+            alt="User"
+          />
+        </span>
           <span
-            className={`text-sm font-medium ${
+            className={`block mr-1 font-medium text-theme-sm ${
               isDark ? "text-gray-200" : "text-gray-800"
             }`}
           >
-            Usuario
+            DvlprChris
           </span>
         </div>
         {isOpen ? (
@@ -94,7 +103,8 @@ const UserDropdown = () => {
                   ? "text-gray-300 hover:bg-gray-700"
                   : "text-gray-700 hover:bg-gray-100"
               }`}
-              onClick={() => router.push("/perfil")}
+              // onClick={() => router.push("/profile")}
+              onClick={() => router.push("/dashboard/profile")}
             >
               Mi Perfil
             </button>

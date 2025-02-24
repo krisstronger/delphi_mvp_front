@@ -14,14 +14,13 @@ const outfit = Outfit({
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className="scroll-smooth">
-      <body className={`${outfit.variable} dark:bg-gray-900`}>
-        <main className="">
-        <ThemeProvider>
-          <SidebarProvider>{children}</SidebarProvider>
-        </ThemeProvider>
-        </main>
-      </body>
-    </html>
+// app/layout.tsx
+<html lang="es" className="scroll-smooth">
+  <body className={`${outfit.variable} dark:bg-gray-900`}>
+    <ThemeProvider>
+      <SidebarProvider>{children}</SidebarProvider>
+    </ThemeProvider>
+  </body>
+</html>
   );
 }
