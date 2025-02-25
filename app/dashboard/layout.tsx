@@ -4,6 +4,7 @@ import { SidebarProvider } from "@/context/SidebarContext";
 import AppHeader from "@/components/Dashboard/AppHeader";
 import AppSidebar from "@/components/Dashboard/AppSidebar";
 import Backdrop from "@/components/Dashboard/Backdrop";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function DashboardLayout({
   children,
@@ -11,6 +12,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
+ const { isDark } = useTheme(); // Usa la variable isDark del contexto
 
   // Dynamic class for main content margin based on sidebar state
   const mainContentMargin = isMobileOpen
@@ -20,7 +22,14 @@ export default function DashboardLayout({
     : "lg:ml-[80px]";
 
   return (
-    <div className="min-h-screen xl:flex">
+    // <div className="min-h-screen xl:flex bg-white">
+       <div
+        className={`min-h-screen xl:flex ${
+          isDark
+            ? "border-gray-700 bg-gray-800 text-white"
+            : "border-gray-200 bg-white text-gray-800"
+        }`}
+      >
       {/* Sidebar and Backdrop */}
       <AppSidebar />
       <Backdrop />

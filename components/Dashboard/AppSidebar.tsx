@@ -3,6 +3,7 @@ import { useSidebar } from "@/context/SidebarContext";
 import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import {
   HomeIcon,
   CalendarIcon,
@@ -19,7 +20,7 @@ const AppSidebar = () => {
     toggleSubmenu,
     setActiveItem,
   } = useSidebar();
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
   const pathname = usePathname();
 
   // Definición de los menús principales y submenús
@@ -76,11 +77,19 @@ const AppSidebar = () => {
       className={`fixed inset-y-0 left-0 z-40 w-64 shadow-lg transform transition-transform duration-300 ease-in-out ${
         isMobileOpen ? "translate-x-0" : "-translate-x-full"
       } lg:translate-x-0 ${
-        theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+        isDark ? "bg-gray-800 text-white" : "bg-white text-gray-800"
       }`}
     >
       <div className="p-4">
-        <h1 className="text-2xl font-bold text-sky-600 mb-6">Delphi</h1>
+        {/* <h1 className="text-2xl font-bold text-sky-600 mb-6">Delphi</h1> */}
+         <Image
+                      width={200}
+                      height={32}
+                      className="dark:hidden text-center bg-center pl-2 max-w pr-0"
+                      src="/assets/images/logo/logo_nobg.png"
+                      alt="Logo"
+                    />
+
         <nav className="mt-6">
           <ul className="space-y-2">
             {navItems.map((item) => (

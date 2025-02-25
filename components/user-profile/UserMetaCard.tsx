@@ -6,7 +6,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import Image from "next/image";
 import { useTheme } from "@/context/ThemeContext";
-import React, { useState } from "react";
+import React, { useState,useRef  } from "react";
 import { UserCircleIcon } from "@heroicons/react/24/outline";
 
 export default function UserMetaCard() {
@@ -25,6 +25,13 @@ export default function UserMetaCard() {
     instagram: "https://instagram.com/PimjoHQ",
   });
 
+  // Estado para la imagen de perfil
+  const [profileImage, setProfileImage] = useState<string | null>(
+    "/assets/images/user/owner.gif" // Imagen por defecto
+  );
+  const [tempProfileImage, setTempProfileImage] = useState<string | null>(null); // Imagen temporal (antes de guardar)
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleChange = (e: any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -32,7 +39,32 @@ export default function UserMetaCard() {
 
   const handleSave = () => {
     console.log("Guardando cambios...", formData);
+
+    // Simular la persistencia de la imagen (en el futuro se enviará al backend)
+    if (tempProfileImage) {
+      setProfileImage(tempProfileImage); // Actualizar la imagen de perfil
+      setTempProfileImage(null); // Limpiar la imagen temporal
+    }
+
     closeModal();
+  };
+  
+
+  // Función para manejar la selección de la imagen
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Función para abrir el selector de archivos
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
   };
 
   return (
@@ -55,8 +87,9 @@ export default function UserMetaCard() {
               <Image
                 width={80}
                 height={80}
-                src="/assets/images/user/owner.gif"
+                src={profileImage || "/assets/images/user/owner.gif"} // Mostrar la imagen guardada o la predeterminada
                 alt="user"
+                className="object-cover w-full h-full"
               />
             </div>
             {/* imagen perfil */}
@@ -242,7 +275,50 @@ export default function UserMetaCard() {
         }
       >
         {/* Contenido dinámico del modal */}
-        <div className="px-2 pb-3 no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl  p-4 dark:bg-gray-900 lg:p-11">
+        <div className="px-2 pb-3 no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl p-4 dark:bg-gray-900 lg:p-11">
+          {/* Sección de la imagen de perfil */}
+          <div className="flex flex-col items-center mt-0 mb-12">
+            <div
+              className={`w-24 h-24 overflow-hidden border rounded-full ${
+                isDark ? "border-gray-700" : "border-gray-200"
+              }`}
+              onClick={handleImageClick}
+              style={{ cursor: "pointer" }}
+            >
+              {profileImage ? (
+                <Image
+                  width={96}
+                  height={96}
+                  src={profileImage}
+                  alt="user"
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <Image
+                  width={96}
+                  height={96}
+                  src="/assets/images/user/owner.gif"
+                  alt="user"
+                />
+              )}
+            </div>
+            {/* Input oculto para seleccionar la imagen */}
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageChange}
+              accept="image/*"
+              style={{ display: "none" }}
+            />
+            <p
+              className={`mt-3 text-sm ${
+                isDark ? "text-gray-400" : "text-gray-600"
+              }`}
+            >
+              Haz clic en la imagen para cambiar la foto de perfil.
+            </p>
+          </div>
+
           {/* Sección de enlaces sociales */}
           <div>
             <h5
