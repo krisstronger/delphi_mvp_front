@@ -1,9 +1,9 @@
 "use client";
 import { useSidebar } from "@/context/SidebarContext";
 import { SidebarProvider } from "@/context/SidebarContext";
-import AppHeader from "@/components/Dashboard/AppHeader";
-import AppSidebar from "@/components/Dashboard/AppSidebar";
-import Backdrop from "@/components/Dashboard/Backdrop";
+import AppHeader from "@/components/dashboard/AppHeader";
+import AppSidebar from "@/components/dashboard/AppSidebar";
+import Backdrop from "@/components/dashboard/Backdrop";
 import { useTheme } from "@/context/ThemeContext";
 
 export default function DashboardLayout({

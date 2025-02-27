@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import GridShape from "@/components/common/GridShape";
+import Image from "next/image";
 
 const Login = () => {
   const router = useRouter();
@@ -33,6 +34,13 @@ const Login = () => {
           <CardTitle className="text-2xl font-bold text-white">Iniciar Sesión</CardTitle>
         </CardHeader>
         <CardContent>
+          <Image
+                    src="/assets/images/logo/logo2.png"
+                    alt="logo"
+                    width={300}
+                    height={200}
+                    className="mx-auto"
+                  />
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Campo Email */}
             <div>
@@ -59,13 +67,13 @@ const Login = () => {
             </div>
 
             {/* Botón de Login */}
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 transition">
+            <Button type="submit" className="w-full bg-sky-600 hover:bg-sky-700 transition">
               Iniciar Sesión
             </Button>
 
             {/* Enlace de recuperación */}
             <p className="text-sm text-gray-400 text-center mt-2">
-              ¿Olvidaste tu contraseña? <a href="#" className="text-blue-500 hover:underline">Recupérala aquí</a>
+              ¿Olvidaste tu contraseña? <a href="#" className="text-sky-500 hover:underline">Recupérala aquí</a>
             </p>
           </form>
         </CardContent>

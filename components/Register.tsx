@@ -91,14 +91,14 @@ const Register = () => {
             </div>
 
             {/* Botón de Registro */}
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 transition">
+            <Button type="submit" className="w-full bg-sky-600 hover:bg-sky-700 transition">
               Registrarse
             </Button>
 
             {/* Enlace para iniciar sesión */}
             <p className="text-sm text-gray-400 text-center mt-2">
               ¿Ya tienes una cuenta?{" "}
-              <a href="/login" className="text-blue-500 hover:underline">
+              <a href="/login" className="text-sky-500 hover:underline">
                 Inicia sesión aquí
               </a>
             </p>

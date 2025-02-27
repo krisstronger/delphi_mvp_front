@@ -10,6 +10,8 @@ import {
   UsersIcon,
   ChartBarIcon,
   CogIcon,
+  StarIcon,
+  SwatchIcon
 } from "@heroicons/react/24/outline";
 
 const AppSidebar = () => {
@@ -43,17 +45,24 @@ const AppSidebar = () => {
       id: "eventos",
       label: "Eventos",
       href: "",
-      icon: <CalendarIcon className="w-6 h-6" />,
+      icon: <StarIcon className="w-6 h-6" />,
       submenu: [
         { id: "crear-evento", label: "Crear Evento", href: "/dashboard/eventos/crear" },
         { id: "ver-eventos", label: "Ver Eventos", href: "/dashboard/eventos/lista" },
       ],
     },
     {
-      id: "usuarios",
-      label: "Usuarios",
-      href: "/dashboard/usuarios",
+      id: "personal",
+      label: "Personal",
+      href: "/dashboard/personal",
       icon: <UsersIcon className="w-6 h-6" />,
+      submenu: [],
+    },
+    {
+      id: "servicios",
+      label: "Servicios",
+      href: "/dashboard/servicios",
+      icon: <SwatchIcon className="w-6 h-6" />,
       submenu: [],
     },
     {
