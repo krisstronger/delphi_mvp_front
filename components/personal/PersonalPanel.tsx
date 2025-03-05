@@ -5,11 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format, isToday  } from "date-fns";
-import { es } from 'date-fns/locale'; // Importar la localización en español
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { format } from "date-fns";
+import { es } from "date-fns/locale"; // Importar la localización en español
 
 // Definir tipo para empleados
 interface Empleado {
@@ -20,6 +31,9 @@ interface Empleado {
 
 const PersonalPanel = () => {
   const { isDark } = useTheme();
+
+  // Estado para controlar si estamos editando un empleado
+  const [editando, setEditando] = useState(false);
 
   // Estado para empleados
   const [empleados, setEmpleados] = useState<Empleado[]>([
@@ -48,150 +62,188 @@ const PersonalPanel = () => {
     horario: { inicio: new Date(), fin: new Date() },
   });
 
-  // Estado para manejar el error de validación
-  const [errorNombre, setErrorNombre] = useState<string | null>(null);
+  // Función para guardar o actualizar un empleado
+  const guardarEmpleado = (e: React.FormEvent) => {
+    e.preventDefault();
 
-  // Función para agregar un empleado
-  const agregarEmpleado = () => {
-    if (!nuevoEmpleado.nombre.trim()) {
-      setErrorNombre("El nombre del empleado es obligatorio.");
-      return; // Detener la ejecución si el nombre está vacío
+    if (editando) {
+      // Editar empleado existente
+      setEmpleados((prev) =>
+        prev.map((empleado) =>
+          empleado.id === nuevoEmpleado.id ? nuevoEmpleado : empleado
+        )
+      );
+    } else {
+      // Crear nuevo empleado
+      setEmpleados((prev) => [
+        ...prev,
+        { ...nuevoEmpleado, id: Date.now() }, // Usar timestamp como ID
+      ]);
     }
 
-    // Limpiar el error si el nombre es válido
-    setErrorNombre(null);
-
-    // Agregar el empleado
-    setEmpleados([...empleados, { ...nuevoEmpleado, id: empleados.length + 1 }]);
+    // Limpiar el formulario
     setNuevoEmpleado({ id: 0, nombre: "", horario: { inicio: new Date(), fin: new Date() } });
+    setEditando(false);
   };
 
   // Función para eliminar un empleado
   const eliminarEmpleado = (id: number) => {
-    setEmpleados(empleados.filter((e) => e.id !== id));
+    setEmpleados((prev) => prev.filter((empleado) => empleado.id !== id));
+  };
+
+  // Función para editar un empleado
+  const editarEmpleado = (empleado: Empleado) => {
+    setNuevoEmpleado(empleado);
+    setEditando(true);
   };
 
   return (
-    <Card className={`mb-6 ${isDark ? "bg-gray-700 border-gray-600" : "bg-white border-gray-200"}`}>
+    <div
+         className={`p-5 border rounded-2xl ${
+           isDark
+             ? "border-gray-700 bg-gray-800 text-white"
+             : "border-gray-200 bg-white text-gray-800"
+         }`}
+       >
+         <Card
+           className={`mb-6 ${
+             isDark ? "bg-gray-700 border-gray-600" : "bg-white border-gray-200"
+           }`}
+         >
       <CardHeader>
         <CardTitle className={`${isDark ? "text-gray-200" : "text-gray-800"}`}>
           Gestión de Empleados
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div>
-            <Label className={`${isDark ? "text-gray-300" : "text-gray-700"}`}>Nombre</Label>
-            <Input
-              type="text"
-              placeholder="Nombre del empleado"
-              value={nuevoEmpleado.nombre}
-              onChange={(e) => {
-                setNuevoEmpleado({ ...nuevoEmpleado, nombre: e.target.value });
-                setErrorNombre(null); // Limpiar el error al cambiar el valor
-              }}
-              className={`w-full ${
-                isDark
-                  ? "bg-gray-600 border-gray-500 text-white"
-                  : "bg-white border-gray-200 text-gray-800"
-              }`}
-            />
-            {errorNombre && (
-              <p className="text-sm text-red-500 mt-1">{errorNombre}</p>
-            )}
+        <form onSubmit={guardarEmpleado}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            {/* Nombre del Empleado */}
+            <div>
+              <Label className={`${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                Nombre
+              </Label>
+              <Input
+                required
+                type="text"
+                placeholder="Nombre del empleado"
+                value={nuevoEmpleado.nombre}
+                onChange={(e) =>
+                  setNuevoEmpleado({ ...nuevoEmpleado, nombre: e.target.value })
+                }
+                className={`w-full ${
+                  isDark
+                    ? "bg-gray-600 border-gray-500 text-white"
+                    : "bg-white border-gray-200 text-gray-800"
+                }`}
+              />
+            </div>
+
+            {/* Horario de Inicio */}
+            <div>
+              <Label className={`${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                Horario de Inicio
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={`w-full justify-start text-left font-normal ${
+                      isDark
+                        ? "bg-gray-600 border-gray-500 text-white hover:bg-gray-500"
+                        : "bg-white border-gray-200 text-gray-800 hover:bg-gray-50"
+                    }`}
+                  >
+                    {format(nuevoEmpleado.horario.inicio, "dd/MM/yyyy HH:mm", {
+                      locale: es,
+                    })}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className={`w-auto p-0 ${isDark ? "bg-gray-800" : "bg-white"}`}
+                >
+                  <Calendar
+                    mode="single"
+                    selected={nuevoEmpleado.horario.inicio}
+                    onSelect={(date) =>
+                      setNuevoEmpleado({
+                        ...nuevoEmpleado,
+                        horario: {
+                          ...nuevoEmpleado.horario,
+                          inicio: date || new Date(),
+                        },
+                      })
+                    }
+                    initialFocus
+                    className={`${
+                      isDark ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+                    }`}
+                    locale={es}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
+
+            {/* Horario de Fin */}
+            <div>
+              <Label className={`${isDark ? "text-gray-300" : "text-gray-700"}`}>
+                Horario de Fin
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={`w-full justify-start text-left font-normal ${
+                      isDark
+                        ? "bg-gray-600 border-gray-500 text-white hover:bg-gray-500"
+                        : "bg-white border-gray-200 text-gray-800 hover:bg-gray-50"
+                    }`}
+                  >
+                    {format(nuevoEmpleado.horario.fin, "dd/MM/yyyy HH:mm", {
+                      locale: es,
+                    })}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className={`w-auto p-0 ${isDark ? "bg-gray-800" : "bg-white"}`}
+                >
+                  <Calendar
+                    mode="single"
+                    selected={nuevoEmpleado.horario.fin}
+                    onSelect={(date) =>
+                      setNuevoEmpleado({
+                        ...nuevoEmpleado,
+                        horario: {
+                          ...nuevoEmpleado.horario,
+                          fin: date || new Date(),
+                        },
+                      })
+                    }
+                    initialFocus
+                    className={`${
+                      isDark ? "bg-gray-800 text-white" : "bg-white text-gray-800"
+                    }`}
+                    locale={es}
+                  />
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
-          <div>
-  <Label className={`${isDark ? "text-gray-300" : "text-gray-700"}`}>Horario de Inicio</Label>
-  <Popover>
-    <PopoverTrigger asChild>
-      <Button
-        variant="outline"
-        className={`w-full justify-start text-left font-normal ${
-          isDark
-            ? "bg-gray-600 border-gray-500 text-white hover:bg-gray-500"
-            : "bg-white border-gray-200 text-gray-800 hover:bg-gray-50"
-        }`}
-      >
-        {format(nuevoEmpleado.horario.inicio, "dd/MM/yyyy HH:mm", { locale: es })}
-      </Button>
-    </PopoverTrigger>
-    <PopoverContent className={`w-auto p-0 ${isDark ? "bg-gray-800" : "bg-white"}`}>
-      <div className={`p-2 ${isDark ? "bg-gray-800" : "bg-white"}`}>
-        <Calendar
-          mode="single"
-          selected={nuevoEmpleado.horario.inicio}
-          onSelect={(date) =>
-            setNuevoEmpleado({
-              ...nuevoEmpleado,
-              horario: { ...nuevoEmpleado.horario, inicio: date || new Date() },
-            })
-          }
-          initialFocus
-          className={`${isDark ? "bg-gray-800 text-white" : "bg-white text-gray-800"}`}
-          sx={{
-            backgroundColor: isDark ? '#1f2937' : '#ffffff',
-            color: isDark ? '#ffffff' : '#1f2937',
-            border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`
-          }}
-          locale={es}
-        />
-      </div>
-    </PopoverContent>
-  </Popover>
-</div>
-<div>
-  <Label className={`${isDark ? "text-gray-300" : "text-gray-700"}`}>Horario de Fin</Label>
-  <Popover>
-    <PopoverTrigger asChild>
-      <Button
-        variant="outline"
-        className={`w-full justify-start text-left font-normal ${
-          isDark
-            ? "bg-gray-600 border-gray-500 text-white hover:bg-gray-500"
-            : "bg-white border-gray-200 text-gray-800 hover:bg-gray-50"
-        }`}
-      >
-        {format(nuevoEmpleado.horario.fin, "dd/MM/yyyy HH:mm", { locale: es })}
-      </Button>
-    </PopoverTrigger>
-    <PopoverContent className={`w-auto p-0 ${isDark ? "bg-gray-800" : "bg-white"}`}>
-      <div className={`p-2 ${isDark ? "bg-gray-800" : "bg-white"}`}>
-        <Calendar
-          mode="single"
-          selected={nuevoEmpleado.horario.fin}
-          onSelect={(date) =>
-            setNuevoEmpleado({
-              ...nuevoEmpleado,
-              horario: { ...nuevoEmpleado.horario, fin: date || new Date() },
-            })
-          }
-          initialFocus
-          className={`${isDark ? "bg-gray-800 text-white" : "bg-white text-gray-800"}`}
-          sx={{
-            backgroundColor: isDark ? '#1f2937' : '#ffffff',
-            color: isDark ? '#ffffff' : '#1f2937',
-            border: `1px solid ${isDark ? '#374151' : '#e5e7eb'}`
-          }}
-          locale={es}
-         dayCla
-        />
-      </div>
-    </PopoverContent>
-  </Popover>
-</div>
-          <div className="flex items-end">
+
+          {/* Botón para guardar o actualizar */}
+          <div className="flex justify-start mb-6">
             <Button
-              onClick={agregarEmpleado}
+              type="submit"
               className={`${
                 isDark
                   ? "bg-sky-600 hover:bg-sky-700 text-white"
                   : "bg-sky-500 hover:bg-sky-600 text-white"
               }`}
             >
-              Agregar Empleado
+              {editando ? "Actualizar Empleado" : "Agregar Empleado"}
             </Button>
           </div>
-        </div>
+        </form>
 
         {/* Lista de Empleados */}
         <Table>
@@ -222,18 +274,19 @@ const PersonalPanel = () => {
                         ? "bg-sky-600 hover:bg-sky-700 text-white"
                         : "bg-sky-500 hover:bg-sky-600 text-white"
                     }`}
+                    onClick={() => editarEmpleado(empleado)}
                   >
                     Editar
                   </Button>
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => eliminarEmpleado(empleado.id)}
                     className={`mr-4 ${
                       isDark
                         ? "bg-rose-600 hover:bg-rose-700 text-white"
                         : "bg-rose-500 hover:bg-rose-600 text-white"
                     }`}
+                    onClick={() => eliminarEmpleado(empleado.id)}
                   >
                     Eliminar
                   </Button>
@@ -244,6 +297,7 @@ const PersonalPanel = () => {
         </Table>
       </CardContent>
     </Card>
+    </div>
   );
 };
 

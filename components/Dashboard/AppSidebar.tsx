@@ -13,6 +13,7 @@ import {
   StarIcon,
   SwatchIcon
 } from "@heroicons/react/24/outline";
+import { useBusiness } from "@/context/BusinessContext";
 
 const AppSidebar = () => {
   const {
@@ -24,6 +25,17 @@ const AppSidebar = () => {
   } = useSidebar();
   const { theme, isDark } = useTheme();
   const pathname = usePathname();
+
+
+// Obtiene el ID del negocio desde el contexto
+const { businessId, setBusinessId } = useBusiness();
+
+const handleSelectBusiness = (id: string) => {
+  setBusinessId(id); // Actualiza el ID del negocio
+};
+
+
+handleSelectBusiness('barberia123') //HARCODEO
 
   // Definición de los menús principales y submenús
   const navItems = [
@@ -44,12 +56,9 @@ const AppSidebar = () => {
     {
       id: "eventos",
       label: "Eventos",
-      href: "",
+      href: "/dashboard/eventos",
       icon: <StarIcon className="w-6 h-6" />,
-      submenu: [
-        { id: "crear-evento", label: "Crear Evento", href: "/dashboard/eventos/crear" },
-        { id: "ver-eventos", label: "Ver Eventos", href: "/dashboard/eventos/lista" },
-      ],
+      submenu: [],
     },
     {
       id: "personal",
@@ -63,7 +72,16 @@ const AppSidebar = () => {
       label: "Servicios",
       href: "/dashboard/servicios",
       icon: <SwatchIcon className="w-6 h-6" />,
-      submenu: [],
+      submenu: [
+        //quitar submenu, solo prueba estetica
+        {
+          id: "inicio",
+          label: "Inicio",
+          href: "/dashboard",
+          icon: <HomeIcon className="w-6 h-6" />,
+          submenu: [],
+        },
+      ],
     },
     {
       id: "reportes",
@@ -75,10 +93,17 @@ const AppSidebar = () => {
     {
       id: "configuracion",
       label: "Configuración",
-      href: "/dashboard/configuracion",
+      href: `/dashboard/configuracion`, // Pasa el ID del negocio
       icon: <CogIcon className="w-6 h-6" />,
       submenu: [],
     },
+    // {
+    //   id: "configuracion",
+    //   label: "Configuración",
+    //   href: `/dashboard/configuracion/${businessId}`, // Pasa el ID del negocio
+    //   icon: <CogIcon className="w-6 h-6" />,
+    //   submenu: [],
+    // }
   ];
 
   return (

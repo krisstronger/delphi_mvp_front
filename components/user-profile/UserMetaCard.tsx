@@ -21,7 +21,7 @@ export default function UserMetaCard() {
     bio: "Team Lead",
     facebook: "https://www.facebook.com/PimjoHQ",
     twitter: "https://x.com/PimjoHQ",
-    linkedin: "https://www.linkedin.com/company/pimjo",
+    linkedin: "https://www.linkedin.com/in/kris-sandoval/",
     instagram: "https://instagram.com/PimjoHQ",
   });
 
@@ -180,7 +180,7 @@ export default function UserMetaCard() {
             </a>
 
             <a
-              href="https://www.linkedin.com/company/pimjo"
+              href="https://www.linkedin.com/in/kris-sandoval/"
               target="_blank"
               rel="noreferrer"
               className={`flex h-11 w-11 items-center justify-center gap-2 rounded-full border ${

@@ -53,7 +53,18 @@ const ServiciosPanel = () => {
   };
 
   return (
-    <Card className={`mb-6 ${isDark ? "bg-gray-700 border-gray-600" : "bg-white border-gray-200"}`}>
+  <div
+         className={`p-5 border rounded-2xl ${
+           isDark
+             ? "border-gray-700 bg-gray-800 text-white"
+             : "border-gray-200 bg-white text-gray-800"
+         }`}
+       >
+         <Card
+           className={`mb-6 ${
+             isDark ? "bg-gray-700 border-gray-600" : "bg-white border-gray-200"
+           }`}
+         >
       <CardHeader>
         <CardTitle className={`${isDark ? "text-gray-200" : "text-gray-800"}`}>
           Gestión de Servicios
@@ -156,6 +167,7 @@ const ServiciosPanel = () => {
         </Table>
       </CardContent>
     </Card>
+        </div>
   );
 };
 

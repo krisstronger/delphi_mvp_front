@@ -1,10 +1,16 @@
 "use client";
 import { useTheme } from "@/context/ThemeContext";
 import ConfiguracionPanel from "@/components/configuracion/ConfiguracionPanel";
-
+import { useBusiness } from "@/context/BusinessContext";
 
 export default function ConfiguracionPage() {
   const { isDark } = useTheme(); // Usa la variable isDark del contexto
+
+  const { businessId } = useBusiness();
+
+  if (!businessId) {
+    return <p>Selecciona un negocio primero.</p>;
+  }
 
 
   return (
@@ -27,7 +33,7 @@ export default function ConfiguracionPage() {
         </h1>
         <div className="space-y-6">
           {/* Pasamos los datos del negocio al componente ConfiguracionPanel */}
-          <ConfiguracionPanel />
+          <ConfiguracionPanel business={businessId} />
         </div>
       </div>
     </div>

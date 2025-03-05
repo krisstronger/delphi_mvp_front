@@ -11,7 +11,7 @@ import { format, isToday  } from "date-fns";
 import { es } from 'date-fns/locale'; // Importar la localización en español
 
 interface ConfiguracionPanelProps {
-  business: string;
+  business: string; // ID del negocio
 }
 
 const ConfiguracionPanel = ({ business }: ConfiguracionPanelProps) => {
@@ -37,9 +37,34 @@ const [date, setDate] = useState<Date>(new Date());
   };
 
   // Manejar el guardado de la configuración
-  const guardarConfiguracion = () => {
-    console.log("Configuración guardada:", { logo, urlAmigable });
-    alert("Configuración guardada exitosamente.");
+  const guardarConfiguracion = async () => {
+    const formData = new FormData();
+    if (logo) {
+      formData.append("logo", logo);
+    }
+    formData.append("urlAmigable", urlAmigable);
+
+    try {
+      const response = await fetch(`/api/business/${business}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        toast("Configuración guardada exitosamente 😁", {
+          description: format(new Date(), "dd MMMM, yyyy", { locale: es }), // Formato de fecha en español
+          action: {
+            label: "Cerrar",
+            onClick: () => console.log("Cerrar"),
+          },
+        });
+      } else {
+        toast.error("Error al guardar la configuración 😢");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Error al guardar la configuración 😢");
+    }
   };
 
   return (
@@ -117,15 +142,7 @@ const [date, setDate] = useState<Date>(new Date());
                 : "bg-sky-500 hover:bg-sky-600 text-white"
             }`}
             variant="outline"
-            onClick={() =>
-              toast("Operación exitosa 😁", {
-                description: format(date, "dd MMMM, yyyy", { locale: es }), // Formato de fecha en español
-                action: {
-                  label: "Borrar",
-                  onClick: () => console.log("Borrar"),
-                },
-              })
-            }
+            onClick={guardarConfiguracion}
           >
             Guardar Configuración
           </Button>
