@@ -7,44 +7,51 @@ import { Label } from "@/components/ui/label";
 import GridShape from "@/components/common/GridShape";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
+import { useEffect,useState } from "react";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useTheme } from "@/context/ThemeContext";
+import axios from "axios";
 
 const Login = () => {
+  const { isDark } = useTheme();
   const router = useRouter();
   const { login, user } = useAuth();
-  
-  const handleSubmit = (e: React.FormEvent) => {
+  const [message, setMessage] = useState('');
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget as HTMLFormElement);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
+    try {
+      await login(email, password);
 
-    login(email, password);
-
-    // Redirigir según el tipo de usuario
-    if (user) {
-        if (user.type === "admin") {
-          router.push("/dashboard");
-        } else if (user.type === "user") {
-          router.push("/user");
-        }
+      // Redirigir basado en el rol del usuario
+      if (user?.type === "admin") {
+        router.push("/dashboard");
+      } else {
+        router.push("/user");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setMessage(error.response.data.message);
+      } else {
+        setMessage('Error en el servidor');
+      }
+      setDialogOpen(true);
     }
-
-    // Lógica de autenticación aquí (Evaluar usar NextAuth.js, Firebase Auth, etc.)
-    const isLoginSuccessful = true; // Simula un login exitoso
-
-    if (isLoginSuccessful) {
-      router.push("/user");
-    } else {
-      alert("Credenciales incorrectas");
-    }
-
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(29,78,216,0.3),_transparent)]"></div>
-       */}
       <GridShape />
       <Card className="w-full max-w-md bg-gray-900 shadow-xl border border-gray-800 rounded-2xl relative z-10">
         <CardHeader className="text-center mt-0">
@@ -107,6 +114,21 @@ const Login = () => {
           </form>
         </CardContent>
       </Card>
+      
+       {/* Diálogo de error */}
+       <Dialog open={dialogOpen} onOpenChange={() => setDialogOpen(false)}>
+        <DialogContent className={isDark ? "bg-gray-800 text-white" : "bg-white text-gray-800"}>
+          <DialogHeader>
+            <DialogTitle>Error</DialogTitle>
+          </DialogHeader>
+          <div className="mb-4">
+            {/* Mensaje de respuesta */}
+            {message && <p className="text-md text-gray-100 text-center mt-2">{message}</p>}
+
+          </div>
+
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -5,29 +5,68 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import GridShape from "@/components/common/GridShape";
+import axios from 'axios';
+import { useState } from 'react';
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
+
 const Register = () => {
+  const { isDark } = useTheme();
   const router = useRouter();
+  const [message, setMessage] = useState('');
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-     e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  const formData = new FormData(e.target as HTMLFormElement);
-  const password = formData.get("password") as string;
-  const confirmPassword = formData.get("confirmPassword") as string;
+    const formData = new FormData(e.target as HTMLFormElement);
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
 
-  if (password !== confirmPassword) {
-    alert("Las contraseñas no coinciden");
-    return;
-  }
+    if (password !== confirmPassword) {
+      setMessage("Las contraseñas no coinciden");
+      setDialogOpen(true);
+      return;
+    }
 
-  router.push("/dashboard"); // Redirige al dashboard después del registro
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/register`, {
+        name,
+        email,
+        password,
+        confirmPassword,
+      });
+
+      setMessage(response.data.message);
+
+      // Redirigir basado en el rol del usuario
+      if (response.data.role === "admin") {
+        router.push("/dashboard");
+      } else {
+        router.push("/user");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        setMessage(error.response.data.message);
+      } else {
+        setMessage('Error en el servidor');
+      }
+      setDialogOpen(true);
+    }
   };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-      {/* <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(29,78,216,0.3),_transparent)]"></div>
-       */}
-            <GridShape />
+      <GridShape />
       <Card className="w-full max-w-md bg-gray-900 shadow-xl border border-gray-800 rounded-2xl relative z-10">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-white">Regístrate</CardTitle>
@@ -41,6 +80,7 @@ const Register = () => {
               </Label>
               <Input
                 id="name"
+                name="name"
                 type="text"
                 required
                 placeholder="Ingresa tu nombre"
@@ -55,6 +95,7 @@ const Register = () => {
               </Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 required
                 placeholder="Ingresa tu correo"
@@ -69,6 +110,7 @@ const Register = () => {
               </Label>
               <Input
                 id="password"
+                name="password"
                 type="password"
                 required
                 placeholder="••••••••"
@@ -83,6 +125,7 @@ const Register = () => {
               </Label>
               <Input
                 id="confirmPassword"
+                name="confirmPassword"
                 type="password"
                 required
                 placeholder="••••••••"
@@ -105,6 +148,22 @@ const Register = () => {
           </form>
         </CardContent>
       </Card>
+
+      {/* Diálogo de error */}
+      <Dialog open={dialogOpen} onOpenChange={() => setDialogOpen(false)}>
+        <DialogContent className={isDark ? "bg-gray-800 text-white" : "bg-white text-gray-800"}>
+          <DialogHeader>
+            <DialogTitle>Error</DialogTitle>
+          </DialogHeader>
+          <div className="mb-4">
+            {/* Mensaje de respuesta */}
+            {message && <p className="text-md text-gray-100 text-center mt-2">{message}</p>}
+
+          </div>
+
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };
